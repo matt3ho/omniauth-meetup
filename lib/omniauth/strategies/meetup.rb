@@ -11,8 +11,19 @@ module OmniAuth
         :token_url => 'https://secure.meetup.com/oauth2/access'
       }
 
-      def request_phase
-        super
+      def authorize_params
+        super.tap do |params|
+          params[:response_type] ||= DEFAULT_RESPONSE_TYPE
+          params[:client_id] = client.id
+        end
+      end
+
+      def token_params
+        super.tap do |params|
+          params[:grant_type] ||= DEFAULT_GRANT
+          params[:client_id] = client.id
+          params[:client_secret] = client.secret
+        end
       end
 
       uid{ raw_info['id'] }
